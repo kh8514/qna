@@ -123,7 +123,9 @@ export default {
                 evt.preventDefault()
             }
             invalid.value = 'ok'
-            console.log(is_login_form.value)
+            if (is_login_form.value) {
+                login(pEmail.value, password.value)
+            }
 
         }
 
@@ -138,7 +140,7 @@ export default {
             invalid,
             stay
 
-            ,login
+        
             ,updatePassword
             ,msg
         }
