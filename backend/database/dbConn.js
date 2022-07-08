@@ -25,15 +25,17 @@ class DBConn {
             } else {
                 rows = await conn.query(this.query)
             }
+            await conn.commit()
         } 
         catch (error) {
+            await conn.rollback()
             console.log("=========================")
             console.log("DB ERROR :: ",err)
             console.log("=========================")
             throw err
         }
         finally {
-            conn.end()
+            conn.release()
             return rows
         }
     }

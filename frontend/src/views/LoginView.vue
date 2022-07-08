@@ -69,7 +69,7 @@
 
 <script>
 import { onMounted, ref } from 'vue'
-
+import { setCookie, getCookie } from '@/modules/cookie'
 import useLogin from '../modules/login'
 
 export default { 
@@ -91,7 +91,7 @@ export default {
     created() {
 
     },  
-    setup(props) {
+    setup(props, context) {
         const ref_email = ref(null)
         const stay = ref(false)
         const is_login_form = ref(props.type == 'login')
@@ -118,15 +118,28 @@ export default {
             ref_email.value.focus()
         })
 
+        stay.value = getCookie('stay') == 'true'
+
         const onSubmit = (evt) => {
             if (evt) {
                 evt.preventDefault()
             }
             invalid.value = 'ok'
             if (is_login_form.value) {
-                login(pEmail.value, password.value)
+                login(pEmail.value, password.value).then((data)=>{ 
+                    setCookie('email', pEmail.value)
+                    setCookie('token', data.token)
+                    if(stay.value) {
+                        setCookie('stay', 'true')
+                    } else {
+                        setCookie('stay', 'false')
+                        setCookie('token', '')
+                    }
+                    context.emit('state')
+                }).catch((data)=> {
+                    invalid.value = data.rsp
+                })
             }
-
         }
 
         return {

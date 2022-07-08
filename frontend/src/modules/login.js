@@ -19,12 +19,11 @@ export default () => {
         })
     }
 
-    const login = (email, password) => {
+    const login = (email, password) => 
         new Promise((resolve, reject) => {
-            axiosPost('/db/accounts/login',{email, password}, data => resolve(data), data => reject(data))
+            axiosPost('/db/accounts/login', {email, password}, data => resolve(data), data => reject(data))
         })
-    }
-
+    
     return {
         checkToken,
         updatePassword,

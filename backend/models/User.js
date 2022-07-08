@@ -7,17 +7,32 @@ class User {
     }
 
     async login() {
-        const params = this.params
-        const data = await UserStorage.getUserInfo(params.email, params.password)
-        if(data){
-            console.log(data)
-            return {success: true, result:data}
+        let result = {
+            rsp: 'fail'
         }
-        return {success: false, msg: ""}
+        const params = this.params
+        const data = await UserStorage.getUserInfo(params.email)
+        if(data){
+            if(data?.email) {
+                if(data.password != params.password){
+                    result.rsp = 'wrong_password'
+                } else {
+                    const token = await UserStorage.putToken(params.email)
+                    result.rsp = 'ok'
+                    result.token = token
+                }
+            } else {
+                result.rsp = 'no_email'
+            }
+        } else {
+            result.rsp = 'no_email'
+            result.email = params.email
+        }
+        return result
     }
 
     async checkToken() {
-        const result = {
+        let result = {
             rsp: 'fail'
         }
         const params = this.params
@@ -26,8 +41,6 @@ class User {
             result.rsp = 'ok'
         }
         return result
-
-
     }
 
 }
